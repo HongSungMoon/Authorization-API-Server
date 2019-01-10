@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.authorization.api.database.UserMapper">
+
+	<select id="getUser" parameterType="Map" resultType="com.authorization.api.model.UserInfo">
+		select 
+			*
+		from 
+			user
+		where
+			id = #{id} and password = #{password}
+	</select>    
+	
+	<select id="getUserByID" parameterType="String" resultType="com.authorization.api.model.UserInfo">
+		select 
+			*
+		from 
+			user
+		where
+			id = #{id}
+	</select>
+	
+	<insert id="insertUser" parameterType="com.authorization.api.model.UserInfo">
+    	insert into USER (
+    		id,
+    		password,
+    		email,
+    		name
+    	) 
+    	values (
+    		#{id},
+    		#{password},
+    		#{email},
+    		#{name}
+    	)
+    </insert>
+    
+    <update id="modifyUser" parameterType="com.authorization.api.model.UserInfo">
+		update
+			user
+		set
+			password = #{password}, email = #{email}, name = #{name}, salt = #{salt}
+		where
+			id = #{id}
+	</update>
+
+</mapper>
