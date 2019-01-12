@@ -10,6 +10,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import redis.clients.jedis.JedisPoolConfig;
@@ -40,20 +41,26 @@ public class RedisRepositoryConfig {
         JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory();
         jedisConnectionFactory.setHostName(redisHost);
         jedisConnectionFactory.setPort(redisPort);
-//        jedisConnectionFactory.setUsePool(true);
+        jedisConnectionFactory.setUsePool(true);
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxIdle(10);
-        poolConfig.setMaxTotal(20);
+        poolConfig.setMaxTotal(1000);
+        poolConfig.setBlockWhenExhausted(true);
 		jedisConnectionFactory.setPoolConfig(poolConfig);
         return jedisConnectionFactory;
     }
     
     @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(connectionFactory());        
-        return redisTemplate;
-    }
+	public RedisTemplate<String, Object> redisTemplate() {
+		
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		
+		redisTemplate.setKeySerializer(new GenericToStringSerializer<>(Object.class));
+		redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Object.class));
+		redisTemplate.setConnectionFactory(connectionFactory());
+		redisTemplate.setHashValueSerializer(new GenericToStringSerializer<>(Object.class));
+		redisTemplate.setHashKeySerializer(new GenericToStringSerializer<>(Object.class));
+		
+		return redisTemplate;
+		
+	}
 }
