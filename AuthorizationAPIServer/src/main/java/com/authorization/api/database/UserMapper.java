@@ -1,5 +1,6 @@
 package com.authorization.api.database;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -16,5 +17,9 @@ public interface UserMapper {
 	public UserInfo getUserByID(String id);
 
 	public void modifyUser(UserInfo userInfo);
+
+	public String getUserType(String id);
+
+	public List<UserInfo> getUserList();
 
 }

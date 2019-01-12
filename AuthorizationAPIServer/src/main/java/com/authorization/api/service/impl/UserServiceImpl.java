@@ -1,6 +1,7 @@
 package com.authorization.api.service.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +49,35 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void modifyUser(UserInfo userInfo) {
+		
 		String salt = cryptoUtil.randomKey(10);
 		String newPasswd = cryptoUtil.sha256(salt + userInfo.getPassword());
+		
 		userInfo.setSalt(salt);
 		userInfo.setPassword(newPasswd);
+		
 		userMapper.modifyUser(userInfo);
+		
+	}
+
+	@Override
+	public boolean checkAdmin(UserInfo userInfo) {
+		
+		String userType = userMapper.getUserType(userInfo.getId());
+		
+		if(userType.equals("admin"))
+			return true;
+		
+		return false;
+	}
+
+	@Override
+	public List<UserInfo> getUserList() {
+		
+		List<UserInfo> users = userMapper.getUserList();
+		
+		return users;
+		
 	}
 
 }

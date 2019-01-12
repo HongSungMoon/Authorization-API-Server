@@ -1,7 +1,5 @@
 package com.authorization.api.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +8,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.authorization.api.model.UserInfo;
+import com.authorization.api.model.admin.UserList;
 import com.authorization.api.redis.RedisService;
 import com.authorization.api.service.UserService;
 import com.authorization.api.utils.IPAddressUtil;
@@ -34,13 +31,13 @@ public class APIController {
 	@RequestMapping(value = "/hello", method = RequestMethod.POST)
 	public ResponseEntity<String> hello(@RequestBody String access_token) {
 		
-		HttpStatus status = HttpStatus.OK;
+		HttpStatus status = HttpStatus.UNAUTHORIZED;
 		
 		String ip = ipAddressUtil.getIPAddress();
 		
 		// ip와 token을 통한 token check
-		if (!redisService.tokenCheck(access_token, ip)) {
-			status = HttpStatus.UNAUTHORIZED;
+		if (redisService.tokenCheck(access_token, ip) != null) {
+			status = HttpStatus.OK;
 		}
 		
 		return new ResponseEntity<String>("Hello Word!", status);
@@ -55,7 +52,7 @@ public class APIController {
 		
 		String ip = ipAddressUtil.getIPAddress();
 		
-		if (redisService.tokenCheck(userInfo.getAccess_token(), ip)) {
+		if (redisService.tokenCheck(userInfo.getAccess_token(), ip) != null) {
 			status = HttpStatus.OK;
 			userService.modifyUser(userInfo);	
 			result = "success";
@@ -64,5 +61,29 @@ public class APIController {
 		return new ResponseEntity<String>(result, status);
 		
 	}
+	
+	@RequestMapping(value = "/get/user", method = RequestMethod.POST)
+	public ResponseEntity<UserList> getUserList(@RequestBody UserInfo userInfo) {
+		
+		HttpStatus status = HttpStatus.UNAUTHORIZED;
+		UserList userList = new UserList();
+		userList.setResult("fail");
+	
+		String ip = ipAddressUtil.getIPAddress();
+		String userType = redisService.tokenCheck(userInfo.getAccess_token(), ip);
+		
+		if (userType.equals("admin")) {
+			if(userService.checkAdmin(userInfo)) {
+				status = HttpStatus.OK;
+				userList.setList(userService.getUserList());	
+				userList.setResult("success");
+			} 
+		}
+		
+		return new ResponseEntity<UserList>(userList, status);
+		
+	}
+	
+	
 	
 }

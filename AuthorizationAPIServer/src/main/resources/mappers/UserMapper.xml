@@ -3,6 +3,13 @@
 
 <mapper namespace="com.authorization.api.database.UserMapper">
 
+	<resultMap id="UserList" type="com.authorization.api.model.UserInfo">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="email" column="email" />
+		<result property="user_type" column="user_type" />
+	</resultMap>
+
 	<select id="getUser" parameterType="Map" resultType="com.authorization.api.model.UserInfo">
 		select 
 			*
@@ -44,5 +51,21 @@
 		where
 			id = #{id}
 	</update>
+	
+	<select id="getUserType" parameterType="String" resultType="String">
+		select 
+			user_type
+		from 
+			user
+		where
+			id = #{id}
+	</select>
+	
+	<select id="getUserList" resultMap="UserList">
+		select 
+			id, email, name, user_type
+		from 
+			user
+	</select>
 
 </mapper>

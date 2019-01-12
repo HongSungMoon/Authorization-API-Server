@@ -3,15 +3,26 @@ package com.authorization.api.model;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class RedisUserInfo {
 	
 	private String ip;
 	
-	private String timestamp;
+	private Long timestamp;
 	
+	private String user_type;
+	
+	public String getUser_type() {
+		return user_type;
+	}
+
+	public void setUser_type(String user_type) {
+		this.user_type = user_type;
+	}
+
 	public RedisUserInfo() {
-		this.timestamp = ZonedDateTime.now( ZoneOffset.UTC ).format( DateTimeFormatter.ISO_INSTANT );
+		timestamp = new Date().getTime();
 	}
 
 	public String getIp() {
@@ -23,10 +34,10 @@ public class RedisUserInfo {
 	}
 
 	public String getTimestamp() {
-		return timestamp;
+		return Long.toString(timestamp);
 	}
 
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 	
