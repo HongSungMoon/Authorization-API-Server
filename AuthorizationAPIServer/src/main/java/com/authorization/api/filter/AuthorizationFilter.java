@@ -38,12 +38,6 @@
 //		String ip = req.getRemoteAddr();
 //		String access_token = req.getHeader("access_token");
 //		
-//		Enumeration<String> headerNames = req.getHeaderNames();
-//        while(headerNames.hasMoreElements()){
-//            String name = (String)headerNames.nextElement();
-//            String value = req.getHeader(name);
-//            System.out.println(name + " : " + value );
-//        }
 //		if (access_token == null) {
 //			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //			return;

@@ -62,6 +62,7 @@ public class APIController {
 		
 	}
 	
+	@CrossOrigin
 	@RequestMapping(value = "/get/user", method = RequestMethod.POST)
 	public ResponseEntity<UserList> getUserList(@RequestBody UserInfo userInfo) {
 		
